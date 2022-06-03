@@ -3,7 +3,9 @@
 %
 % Bryson Denham problem by parameterizing only control
 % -------------------------------------------------------------------------
-% Primary Contributor: Nakul Randad, Indian Institute of Technology Bombay
+% Primary Contributors: 
+% Nakul Randad, Indian Institute of Technology Bombay
+% Siddhartha Ganguly, Indian Institute of Technology Bombay
 % -------------------------------------------------------------------------
 clear all;close all;
 
