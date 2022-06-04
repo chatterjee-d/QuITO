@@ -6,6 +6,9 @@
 % Primary Contributors: 
 % Nakul Randad, Indian Institute of Technology Bombay
 % Siddhartha Ganguly, Indian Institute of Technology Bombay
+% Refer the article: S. Ganguly, N. Randad, D. Chatterjee, and R. Banavar
+% Constrained optimal trajectory synthesis driven by quasi-interpolation.
+% IEEE Control Systems Letters.
 % -------------------------------------------------------------------------
 clear all;
 close all;
@@ -13,7 +16,7 @@ close all;
 %% Set-up and solve problem
 
 problem = TemplateProblem;          % Fetch the problem definition
-opts = options(200, 5);        % Get options and solver settings (h, D)
+opts = options(100, 5);        % Get options and solver settings (h, D)
 solution = solveProblem(problem, opts);
 
 %% Post-processing
