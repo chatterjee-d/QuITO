@@ -26,7 +26,7 @@ for i = 1:length(iter)
     costs = [costs, solution.cost];
     
     % Extract optimal values
-    X_out = zeros(problem.nx, num_of_steps);
+%     X_out = zeros(problem.nx, num_of_steps);
     U_out = zeros(problem.nu, num_of_steps - 1); % last value of control not useful
     U_opt = zeros(1, num_of_steps - 1);
     for i = 1 : num_of_steps

@@ -26,16 +26,11 @@ if options.print.cost
 end
 time_horizon = linspace(problem.time.t0, problem.time.tf, num_of_steps+1);
 % Extract optimal values
-X_out = zeros(problem.nx, num_of_steps);
-U_out = zeros(problem.nu, num_of_steps - 1); % last value of control not useful
-for i = 1 : num_of_steps + 1
-    X_out(:, i) = opti.value(X(:, i));
-end
 
-X_out = zeros(2, num_of_steps);
+X_out = zeros(2, num_of_steps + 1);
 U_out = zeros(1, num_of_steps); % last value of control not useful
-X_ref = zeros(2, num_of_steps);
-error = zeros(2, num_of_steps);
+X_ref = zeros(2, num_of_steps + 1);
+error = zeros(2, num_of_steps + 1);
 for i = 1 : num_of_steps + 1
     X_out(:, i) = opti.value(X(:, i));
     X_ref(1, i) = 5*sin(time_horizon(i));
@@ -48,7 +43,6 @@ for i = 1 : num_of_steps
 end
 
 % Figure
-
 
 if options.plot
     % Plot action trajectories
@@ -71,14 +65,15 @@ if options.plot
     if options.plot == 2
         for xi = 1 : problem.nx
             figure
+            grid on
+            hold on       
             plot(time_horizon, X_out(xi,:),'b','LineWidth',0.8);
             ylabel("State trajectory");
             xlabel('Time [s]');
             xlim([problem.time.t0, problem.time.tf])
-            grid on
-            legend("x"+num2str(xi));
-            hold on
             plot(time_horizon, X_ref(xi,:),'--','LineWidth',0.8);
+            legend(["x"+num2str(xi) "x"+num2str(xi)+"_{ref}"]);
+            hold off
         end
     end
 end

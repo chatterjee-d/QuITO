@@ -26,8 +26,8 @@ if options.print.cost
 end
 
 % Extract optimal values
-X_out = zeros(problem.nx, num_of_steps);
-U_out = zeros(problem.nu, num_of_steps - 1); % last value of control not useful
+X_out = zeros(problem.nx, num_of_steps + 1);
+U_out = zeros(problem.nu, num_of_steps); % last value of control not useful
 for i = 1 : num_of_steps + 1
     X_out(:, i) = opti.value(X(:, i));
 end

@@ -3,7 +3,9 @@
 %
 % Aly Chan problem by parameterizing only control for multiple stepsizes
 % -------------------------------------------------------------------------
-% Primary Contributor: Nakul Randad, Indian Institute of Technology Bombay
+% Primary Contributor:
+% - Nakul Randad, Indian Institute of Technology Bombay
+% - Siddhartha Ganguly, Indian Institute of Technology Bombay
 % -------------------------------------------------------------------------
 clear all;
 close all;
