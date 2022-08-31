@@ -64,22 +64,30 @@ end
 
 J = 0;
 for i = 1 : num_of_steps
-%     % Euler rule
-%     J = J + lag_cost(X(:,i), U_app(:,i), tau(i)) * h;
-%     % Trapazoidal quadrature
-%     inte = (lag_cost(X(:,i), U_app(:,i), tau(i)) + lag_cost(X(:,i+1), U_app(:,i+1), tau(i+1)))/2;
-%     J = J + inte * h;
-%     % Simpson's rule
-%     if mod(i,2) == 1
-%         inte = (lag_cost(X(:,i), U_app(:,i), tau(i)) + 4 * lag_cost(X(:,i+1), U_app(:,i+1), tau(i+1)) + lag_cost(X(:,i+2), U_app(:,i+2), tau(i+2)))/6;
-%         J = J + inte * (2 * h);
-%     end
-    % Runge-Kutta 4 integration
-    k1 = lag_cost(X(:,i),        U_app(:,i), tau(i));
-    k2 = lag_cost(X(:,i)+h/2*k1, U_app(:,i), tau(i)+h/2);
-    k3 = lag_cost(X(:,i)+h/2*k2, U_app(:,i), tau(i)+h/2);
-    k4 = lag_cost(X(:,i)+h*k3,   U_app(:,i), tau(i)+h);
-    J = J + h/6*(k1+2*k2+2*k3+k4);
+    % Euler rule
+    if strcmp(options.discretization,'euler')
+        J = J + lag_cost(X(:,i), U_app(:,i), tau(i)) * h;
+    end
+    % Trapazoidal quadrature
+    if strcmp(options.discretization,'trapezoidal')
+        inte = (lag_cost(X(:,i), U_app(:,i), tau(i)) + lag_cost(X(:,i+1), U_app(:,i+1), tau(i+1)))/2;
+        J = J + inte * h;
+    end
+    % Hermite-Simpson's rule
+    if strcmp(options.discretization,'hermite')
+        if mod(i,2) == 1
+            inte = (lag_cost(X(:,i), U_app(:,i), tau(i)) + 4 * lag_cost(X(:,i+1), U_app(:,i+1), tau(i+1)) + lag_cost(X(:,i+2), U_app(:,i+2), tau(i+2)))/6;
+            J = J + inte * (2 * h);
+        end
+    end
+    %Runge-Kutta 4 integration
+    if strcmp(options.discretization,'RK4')
+        k1 = lag_cost(X(:,i),        U_app(:,i), tau(i));
+        k2 = lag_cost(X(:,i)+h/2*k1, U_app(:,i), tau(i)+h/2);
+        k3 = lag_cost(X(:,i)+h/2*k2, U_app(:,i), tau(i)+h/2);
+        k4 = lag_cost(X(:,i)+h*k3,   U_app(:,i), tau(i)+h);
+        J = J + h/6*(k1+3*k2+2*k3+k4);
+    end
 end
 
 % Mayer term
