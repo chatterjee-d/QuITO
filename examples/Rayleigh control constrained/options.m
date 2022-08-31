@@ -24,8 +24,9 @@ options.transcription='app_app_collocation';
 % Select a discretization method (integration scheme)
 %---------------------------------------
 % Euler method              ('euler')
-% Trapezoidal method        ('trapezoidal') - not yet coded
-% Hermite-Simpson method    ('hermite') - not yet coded
+% Trapezoidal method        ('trapezoidal') 
+% Hermite-Simpson method    ('hermite') 
+% Runge-kutta method        ('RK4')
 options.discretization='euler';
 
 %% NLP solver
