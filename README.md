@@ -1,5 +1,5 @@
-# Quasi-Interpolation based Trajectory Optimization
-
+# Quasi-Interpolation based Trajectory Optimization u
+ 
 ## Introduction
 
 This is a private repository which includes codes and documents related to the **Quasi-Interpolation based Trajectory Optimization (QuITO)**. The package is built on MATLAB and can be used for constrained trajectory optimization.
