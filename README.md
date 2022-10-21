@@ -1,4 +1,4 @@
-# Quasi-Interpolation based Trajectory Optimization u
+# Quasi-Interpolation based Trajectory Optimization 
  
 ## Introduction
 
