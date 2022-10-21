@@ -15,7 +15,7 @@ close all;
 
 %% Set-up and solve problem
 
-problem = TemplateProblem;          % Fetch the problem definition
+problem = RayleighProblemControlConstraints;          % Fetch the problem definition
 opts = options(100, 5);        % Get options and solver settings (h, D)
 solution = solveProblem(problem, opts);
 
