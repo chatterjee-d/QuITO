@@ -3,7 +3,7 @@ function options = options(varargin)
 %
 % Syntax:  options = options(varargin)
 %          When giving one input with varargin, e.g. with settings(20),will
-%          use D (variance of kernel) = 5 as default
+%          use D (variance of kernel) = 2 as default
 %          When giving two inputs with varargin, e.g. with settings(20, 2),
 %          number of steps will be 10 and D (variance of kernel) = 2
 %
@@ -12,12 +12,39 @@ function options = options(varargin)
 
 %------------- BEGIN CODE --------------
 
+%% Approximate approximations settings
+if nargin == 3
+    options.nodes = varargin{1};
+    options.variance = varargin{2};
+    generating_function_flag = varargin{3};
+elseif nargin == 2
+    options.nodes = varargin{1};
+    options.variance = varargin{2};   
+    generating_function_flag = 1; % default
+elseif nargin == 1
+    options.nodes = varargin{1};
+    options.variance = 2; % D = 2 default
+    generating_function_flag = 1; % default
+else
+    error("Takes in atmost 3 arguments (nodes, variance, basis function)")
+end
+
 %% Transcription Method
 
 % Select a transcription method
 %---------------------------------------
-% - Approximate approximations based collocation method ('app_app_collocation')
-options.transcription='app_app_collocation';
+% - Quasi-Interpolation based trajectory optimization ('QuITO')
+options.transcription='QuITO';
+
+% Select a generating function as per flag
+%---------------------------------------
+% Gaussian order 2                 (1)
+% Laguerre gaussian order 4        (2) 
+% Laguerre gaussian order 6        (3) 
+% Hermite polynomial order 10      (4)
+% Trigonometric guassian order 4   (5)
+% Hyperbolic secant order 2        (6) 
+options.generating_function=generating_function_flag;
 
 %% Discretization Method
 
@@ -26,15 +53,14 @@ options.transcription='app_app_collocation';
 % Euler method              ('euler')
 % Trapezoidal method        ('trapezoidal') 
 % Hermite-Simpson method    ('hermite') 
-% Runge-kutta method        ('RK4')
+% Runge-kutta 4 method      ('RK4')
 options.discretization='euler';
 
 %% NLP solver
 
 % Select a NLP solver
 %---------------------------------------
-% IPOPT: recommended                            ('ipopt')
-% fmincon                                       ('fmincon')
+% IPOPT: recommended                            ('ipopt')                                       
 options.NLPsolver = 'ipopt';
 
 % IPOPT settings (if required)
@@ -61,37 +87,13 @@ options.ipopt.limited_memory_max_history=6;   % Maximum size of the history for 
 options.ipopt.limited_memory_max_skipping=1;  % Threshold for successive iterations where update is skipped for the quasi-Newton approximation.
                                                % The valid range for this integer option is [1,+inf) and its default value is 2. 
 
-% fmincon settings (NOT RECOMMENDED!)
-%---------------------------------------
-% See website for detailed info
+
 
 %% Meshing Strategy
 
 % Type of meshing
-%---------------------------------------
 % - fixed mesh ('fixed')
-% - with local refinement of mesh ('mesh_refinement')
 options.meshstrategy='fixed';
-
-%% Approximate approximations settings
-if mod(varargin{1}, 2) ~= 0
-    error("Number of nodes must be even.")
-end
-
-if nargin == 2
-    if strcmp(varargin{2},'e')
-        options.nodes=varargin{1}; 
-        options.discretization='euler';
-    else
-        options.nodes = varargin{1};
-        options.variance = varargin{2};
-    end
-elseif nargin == 1
-    options.nodes = varargin{1};
-    options.variance = 5; % D = 5 default
-else
-    error("Takes in atmost 2 arguments (nodes [, variance])")
-end
 
 %% Output settings
 

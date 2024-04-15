@@ -1,8 +1,8 @@
 %% Problem formulation
-function [problem] = RayleighProblemControlConstraints
-% Rayleigh problem with control constraints
+function [problem] = invertedPendulumOnCart
+% Inverted Pendulum on a cart with a mass spring system
 %
-% Syntax:  [problem] = RayleighProblemControlConstraints
+% Syntax:  [problem] = invertedPendulumOnCart
 %
 % Outputs:
 %    problem - Structure with information on the optimal control problem
@@ -17,41 +17,34 @@ problem.stageCost = @stageCost;
 % Set Mayer cost (Terminal cost)
 problem.terminalCost = @terminalCost;
 
-% Settings file
-problem.settings = @settings;
-
 % Initial time. t0<tf. NOTE: t_0 has to be zero.
 problem.time.t0 = 0; 
 
 % Final time. tf is fixed.
-problem.time.tf = 4.5;
+problem.time.tf = 15;
 
 % Number of states.
-problem.nx = 2;
+problem.nx = 6;
 
 % Number of inputs.
-problem.nu = 1;
+problem.nu = 2;
 
 % Initial conditions for system. Bounds if x0 is free s.t. x0l=< x0 <=x0u
 % If fixed, x0l == x0u
-problem.states.x0l = [-5 -5]; % Lower bound on initial state
-problem.states.x0u = [-5 -5]; % Upper bound on initial state
+problem.states.x0l = [0 pi/10 0 0 1 1.05]; 
+problem.states.x0u = [0 pi/10 0 0 1 1.05]; 
 
 % State bounds. xl=< x <=xu
-problem.states.xl = [-inf -inf]; % Lower bound on state
-problem.states.xu = [inf inf]; % Upper bound on state
+problem.states.xl = [-2 -2 -2 -2 -2 -2];
+problem.states.xu = [2 2 2 2 2 2];
 
 % Terminal state bounds. xfl=< xf <=xfu. If fixed: xfl == xfu
-problem.states.xfl = [0 0]; % Lower bound on final state
-problem.states.xfu = [0 0]; % Upper bound on final state
+problem.states.xfl = [0 0 0 0 0 0]; 
+problem.states.xfu = [0 0 0 0 0 0];
 
 % Input bounds
-problem.inputs.ul = [-1]; % Lower bound on control
-problem.inputs.uu = [1]; % Upper bound on control
-
-% Bounds on the first control action
-problem.inputs.u0l = [-1]; % Lower bound on initial control
-problem.inputs.u0u = [1]; % Upper bound on initial control
+problem.inputs.ul = [-1 -1];
+problem.inputs.uu = [1 1];
 
 %-------------- END CODE ---------------
 end
@@ -73,10 +66,25 @@ function [dx] = dynamics(x,u,t)
 %    dx - time derivative of x
 %
 %------------- BEGIN CODE --------------
+% Model equations
+m = 0.25;
+M = 3;
+g = 9.81;
+L = 5;
+A = [0 1 0 0 0 0;
+     0 0 -m*g/M 0 0 0;
+     0 0 0 1 0 0;
+     0 0 (m+M)*g/(L*M) 0 0 0;
+     0 0 0 0 0 1;
+     0 0 0 0 -1 0];
+ B = [0 0;
+      1/M 0.1;
+      0 0;
+      -1/(L*M) 0.1;
+      0 0;
+      0.1 1];
 
-dx1 = x(2);
-dx2 = -x(1) + x(2) * (1.4 - 0.14*x(2)^2) + 4 * u(1);
-dx = [dx1; dx2];
+dx = A*x + B*u ;
 
 %-------------- END CODE ---------------
 end
@@ -100,7 +108,9 @@ function lag = stageCost(x,u,t)
 %
 %------------- BEGIN CODE --------------
 
-lag = x(1)^2 + u(1)^2;
+Q = eye(6);
+R = 0.1*eye(2);
+lag = x'*Q*x + u'*R*u;
 
 %-------------- END CODE ---------------
 end

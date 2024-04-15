@@ -1,8 +1,8 @@
 %% Problem formulation
-function [problem] = AlyChan
-% Aly Chan problem
+function [problem] = RayleighProblemMixedConstraint
+% Rayleigh problem with mixed constraints
 %
-% Syntax:  [problem] = AlyChan
+% Syntax:  [problem] = RayleighProblemMixedConstraints
 %
 % Outputs:
 %    problem - Structure with information on the optimal control problem
@@ -21,30 +21,30 @@ problem.terminalCost = @terminalCost;
 problem.time.t0 = 0; 
 
 % Final time. tf is fixed.
-problem.time.tf = pi/2;
+problem.time.tf = 4.5;
 
 % Number of states.
-problem.nx = 3;
+problem.nx = 2;
 
 % Number of inputs.
 problem.nu = 1;
 
 % Initial conditions for system. Bounds if x0 is free s.t. x0l=< x0 <=x0u
 % If fixed, x0l == x0u
-problem.states.x0l = [0 1 0]; 
-problem.states.x0u = [0 1 0]; 
+problem.states.x0l = [-5 -5]; % Lower bound on initial state
+problem.states.x0u = [-5 -5]; % Upper bound on initial state
 
 % State bounds. xl=< x <=xu
-problem.states.xl = [-inf -inf -inf];
-problem.states.xu = [inf inf inf];
+problem.states.xl = [-inf -inf]; % Lower bound on state
+problem.states.xu = [inf inf]; % Upper bound on state
 
 % Terminal state bounds. xfl=< xf <=xfu. If fixed: xfl == xfu
-problem.states.xfl = [-inf -inf -inf]; 
-problem.states.xfu = [inf inf inf];
+problem.states.xfl = [-inf -inf]; % Lower bound on final state
+problem.states.xfu = [+inf inf]; % Upper bound on final state
 
 % Input bounds
-problem.inputs.ul = -1;
-problem.inputs.uu = 1;
+problem.inputs.ul = [-inf]; % Lower bound on control
+problem.inputs.uu = [inf]; % Upper bound on control
 
 %-------------- END CODE ---------------
 end
@@ -68,9 +68,8 @@ function [dx] = dynamics(x,u,t)
 %------------- BEGIN CODE --------------
 
 dx1 = x(2);
-dx2 = u(1);
-dx3 = 0.5 * (x(2)^2 - x(1)^2);
-dx = [dx1; dx2; dx3];
+dx2 = -x(1) + x(2) * (1.4 - 0.14*x(2)^2) + 4 * u(1);
+dx = [dx1; dx2];
 
 %-------------- END CODE ---------------
 end
@@ -94,7 +93,7 @@ function lag = stageCost(x,u,t)
 %
 %------------- BEGIN CODE --------------
 
-lag = 0;
+lag = x(1)^2 + u(1)^2;
 
 %-------------- END CODE ---------------
 end
@@ -116,7 +115,7 @@ function mayer = terminalCost(x,u,t)
 %
 %------------- BEGIN CODE --------------
 
-mayer = x(3);
+mayer = 0;
 
 %-------------- END CODE ---------------
 end

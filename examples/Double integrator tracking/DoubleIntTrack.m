@@ -17,9 +17,6 @@ problem.stageCost = @stageCost;
 % Set Mayer cost (Terminal cost)
 problem.terminalCost = @terminalCost;
 
-% Settings file
-problem.settings = @settings;
-
 % Initial time. t0<tf. NOTE: t_0 has to be zero.
 problem.time.t0 = 0; 
 
@@ -38,7 +35,6 @@ problem.states.x0l = [0 5];
 problem.states.x0u = [0 5]; 
 
 % State bounds. xl=< x <=xu
-limit = 1/9;
 problem.states.xl = [-6 -10];
 problem.states.xu = [6 10];
 
@@ -47,13 +43,9 @@ problem.states.xfl = [-inf -inf];
 problem.states.xfu = [inf inf];
 
 % Input bounds
-U_limit = 10;
+U_limit = 4.7;
 problem.inputs.ul = -U_limit;
 problem.inputs.uu = U_limit;
-
-% Bounds on the first control action
-problem.inputs.u0l = -U_limit;
-problem.inputs.u0u = U_limit;
 
 %-------------- END CODE ---------------
 end

@@ -54,13 +54,19 @@ U = opti.variable(problem.nu, length(tau));
 
 % Quasi-interpolation
 D = options.variance;
-U_hat = @(t) M_hd_x(t, tau, U, h, D, options);
+
+% parametrization for each control signal
+U1_hat = @(t) M_hd_x(t, tau(1:end-1), U(1,:), h, D, options);
+U2_hat = @(t) M_hd_x(t, tau(1:end-1), U(2,:), h, D, options);
+U_hat = @(t) vertcat(U1_hat(t), U2_hat(t));
+%U_hat = @(t) M_hd_x(t, tau, U, h, D);
 
 % Lagrange cost array and store U_hat at nodes and cost function quadrature
 U_app = opti.variable(problem.nu, length(tau));
 for i = 1 : num_of_steps + 1
     U_app(:, i) = U_hat(tau(i));
 end
+
 
 J = 0;
 for i = 1 : num_of_steps
@@ -139,6 +145,21 @@ for uid = 1 : problem.nu
     end
 end
 
+% Nonlinear path constraints
+a1 = 40; b1 = 20;
+a2 = 55; b2 = 40;
+a3 = 45; b3 = 65;
+r1 = 10; r2 = 80;
+for i = 1 : num_of_steps + 1
+  opti.subject_to((X(1,i)-a1)^2 + (X(2,i)-b1)^2 >= r1^2);
+  opti.subject_to((X(1,i)-a1)^2 + (X(2,i)-b1)^2 <= r2^2);
+  opti.subject_to((X(1,i)-a2)^2 + (X(2,i)-b2)^2 >= r1^2);
+  opti.subject_to((X(1,i)-a2)^2 + (X(2,i)-b2)^2 <= r2^2);
+  opti.subject_to((X(1,i)-a3)^2 + (X(2,i)-b3)^2 >= r1^2);
+  opti.subject_to((X(1,i)-a3)^2 + (X(2,i)-b3)^2 <= r2^2);
+end
+
+
 %% Optimization solver
 opti.minimize(J)  % minimise the objective function
 
@@ -198,6 +219,7 @@ function sum = M_hd_x(t, tau, collo_x, h, D, options)
     sum = 0;
     for i = 1:length(tau)
         tau_i = tau(i);
-        sum = sum + collo_x(:,i) * phi(t, tau_i, h, D, options);
+        sum = sum + collo_x(:,i) * phi(t, tau_i, h, D,options);
     end
 end
+

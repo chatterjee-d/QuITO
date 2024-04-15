@@ -1,4 +1,4 @@
-function [solution] = solveProblem(problem, options)
+function [solution] = solveProblemRayleighProblemMixedConstraint(problem, options)
 % solveProblem - main file for solving NLPs
 %
 % Syntax:  [solution] = solveProblem(problem, options)
@@ -139,12 +139,19 @@ for uid = 1 : problem.nu
     end
 end
 
+% Mixed state-control Constraint
+for uid = 1 : problem.nu          
+    for i = 1 : num_of_steps + 1
+        opti.subject_to(U_app(uid, i)+ X(1, i)/6 <= 0 );
+    end
+end
+
 %% Optimization solver
 opti.minimize(J)  % minimise the objective function
 
 % NLP solver used here is ipopt
 opts = struct('ipopt',options.ipopt);
-opti.solver(options.NLPsolver, opts)  % backend NLP solver
+opti.solver(options.NLPsolver)%, opts)  % backend NLP solver
 
 disp('Starting to solve...')
 tic();
@@ -198,6 +205,7 @@ function sum = M_hd_x(t, tau, collo_x, h, D, options)
     sum = 0;
     for i = 1:length(tau)
         tau_i = tau(i);
-        sum = sum + collo_x(:,i) * phi(t, tau_i, h, D, options);
+        sum = sum + collo_x(:,i) * phi(t, tau_i, h, D,options);
     end
 end
+

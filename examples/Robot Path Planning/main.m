@@ -11,15 +11,17 @@
 % Constrained trajectory synthesis via quasi-interpolation, 
 % IEEE Conference on Decision & Control, 2022, Cancun, Mexico
 % -------------------------------------------------------------------------
-clear all;close all;
+clear all;
+close all;
 
 %% Set-up and solve problem
 
-problem = BrysonDenham;          % Fetch the problem definition
-options = options(100, 2);        % Get options and solver settings (N,D),
+problem = RobotPathPlanning;          % Fetch the problem definition
+opts = options(100, 2);        % Get options and solver settings (N,D),
                                %where step size h=(tf-t0)/N
-solution = solveProblem(problem, options);
+% Emply custom solveproblem file to accomodate custom constraints
+solution = solveRobotPathPlanning(problem, opts);
 
 %% Post-processing
 
-postProcess(solution, problem, options)
+postProcess(solution, problem, opts)

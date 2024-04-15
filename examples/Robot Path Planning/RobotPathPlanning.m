@@ -1,8 +1,8 @@
 %% Problem formulation
-function [problem] = BrysonDenham
-% Bryson Denham problem
+function [problem] = RobotPathPlanning
+% Robot Path Planning problem
 %
-% Syntax:  [problem] = BrysonDenham
+% Syntax:  [problem] = RobotPathPlanning
 %
 % Outputs:
 %    problem - Structure with information on the optimal control problem
@@ -17,42 +17,34 @@ problem.stageCost = @stageCost;
 % Set Mayer cost (Terminal cost)
 problem.terminalCost = @terminalCost;
 
-% Settings file
-problem.settings = @settings;
-
 % Initial time. t0<tf. NOTE: t_0 has to be zero.
 problem.time.t0 = 0; 
 
 % Final time. tf is fixed.
-problem.time.tf = 1;
+problem.time.tf = 10;
 
 % Number of states.
-problem.nx = 2;
+problem.nx = 4;
 
 % Number of inputs.
-problem.nu = 1;
+problem.nu = 2;
 
 % Initial conditions for system. Bounds if x0 is free s.t. x0l=< x0 <=x0u
 % If fixed, x0l == x0u
-problem.states.x0l = [0 1]; 
-problem.states.x0u = [0 1]; 
+problem.states.x0l = [40 5 -inf -inf]; 
+problem.states.x0u = [40 5 inf inf]; 
 
 % State bounds. xl=< x <=xu
-limit = 1/9;
-problem.states.xl = [-inf -inf];
-problem.states.xu = [limit inf];
+problem.states.xl = [0 0 -10 -10];
+problem.states.xu = [80 80 10 10];
 
 % Terminal state bounds. xfl=< xf <=xfu. If fixed: xfl == xfu
-problem.states.xfl = [0 -1]; 
-problem.states.xfu = [0 -1];
+problem.states.xfl = [55 70 -inf -inf]; 
+problem.states.xfu = [55 70 inf inf];
 
 % Input bounds
-problem.inputs.ul = -inf;
-problem.inputs.uu = inf;
-
-% Bounds on the first control action
-problem.inputs.u0l = -inf;
-problem.inputs.u0u = inf;
+problem.inputs.ul = [-inf -inf];
+problem.inputs.uu = [inf inf];
 
 %-------------- END CODE ---------------
 end
@@ -75,9 +67,11 @@ function [dx] = dynamics(x,u,t)
 %
 %------------- BEGIN CODE --------------
 
-dx1 = x(2);
-dx2 = u(1);
-dx = [dx1; dx2];
+dx1 = x(3);
+dx2 = x(4);
+dx3 = u(1);
+dx4 = u(2);
+dx = [dx1; dx2; dx3; dx4];
 
 %-------------- END CODE ---------------
 end
@@ -101,8 +95,7 @@ function lag = stageCost(x,u,t)
 %
 %------------- BEGIN CODE --------------
 
-u1 = u(1);
-lag = 0.5 * (u1 ^ 2);
+lag = (u(1)^2) + (u(2)^2);
 
 %-------------- END CODE ---------------
 end
